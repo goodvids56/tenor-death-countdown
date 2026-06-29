@@ -1,0 +1,264 @@
+:root {
+  --bg: #0a0a0f;
+  --bg-2: #12121a;
+  --fg: #e8e8ef;
+  --muted: #8a8a99;
+  --accent: #5eead4;
+  --link: #7dd3fc;
+  --dead: #ff2d2d;
+  --dead-deep: #8b0000;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  background: radial-gradient(circle at 50% -10%, var(--bg-2), var(--bg) 60%);
+  color: var(--fg);
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background 1.2s ease;
+}
+
+.vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 200px 40px rgba(0, 0, 0, 0.6);
+  z-index: 1;
+}
+
+/* full-screen red flash used at the moment of death */
+.flash {
+  position: fixed;
+  inset: 0;
+  background: var(--dead);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 50;
+}
+.flash.fire {
+  animation: flash 1.6s ease-out forwards;
+}
+@keyframes flash {
+  0%   { opacity: 0; }
+  8%   { opacity: 0.85; }
+  100% { opacity: 0; }
+}
+
+.wrap {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  width: 100%;
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 7vh 24px 40px;
+  text-align: center;
+}
+
+.hero { margin-bottom: 48px; }
+
+.eyebrow {
+  font-size: 0.95rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 14px;
+}
+
+.title {
+  font-size: clamp(2rem, 6vw, 3.4rem);
+  font-weight: 800;
+  line-height: 1.08;
+  margin: 0 0 18px;
+}
+
+.subtitle {
+  font-size: clamp(1rem, 2.4vw, 1.2rem);
+  color: var(--muted);
+  max-width: 640px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+.subtitle strong { color: var(--fg); }
+
+a { color: var(--link); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ---- Clock ---- */
+.clock {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: clamp(6px, 2vw, 18px);
+  font-family: "JetBrains Mono", monospace;
+  margin: 8px 0 18px;
+}
+
+.unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: clamp(64px, 18vw, 130px);
+}
+
+.num {
+  font-size: clamp(2.6rem, 11vw, 6rem);
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 24px rgba(94, 234, 212, 0.25);
+}
+
+.label {
+  font-size: clamp(0.65rem, 1.6vw, 0.9rem);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 10px;
+}
+
+.sep {
+  font-size: clamp(2rem, 8vw, 4.4rem);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--muted);
+  animation: blink 1s steps(1) infinite;
+}
+@keyframes blink { 50% { opacity: 0.25; } }
+
+.status {
+  font-size: clamp(1rem, 2.6vw, 1.35rem);
+  letter-spacing: 0.04em;
+  color: var(--fg);
+  margin: 18px 0 0;
+}
+
+.sound-prompt {
+  margin-top: 26px;
+  padding: 12px 22px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--dead-deep);
+  border: 1px solid var(--dead);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.2s ease;
+  animation: pulse-btn 1.4s ease-in-out infinite;
+}
+.sound-prompt:hover { background: var(--dead); transform: scale(1.04); }
+@keyframes pulse-btn {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 45, 45, 0.5); }
+  50%      { box-shadow: 0 0 0 14px rgba(255, 45, 45, 0); }
+}
+
+/* ---- Reading section ---- */
+.reading {
+  margin-top: 64px;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
+  padding: 28px 32px;
+}
+.reading h2 {
+  margin: 0 0 14px;
+  font-size: 1.3rem;
+}
+.reading p {
+  color: var(--muted);
+  line-height: 1.7;
+  margin: 0 0 18px;
+}
+.reading strong { color: var(--fg); }
+.links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 10px;
+}
+.links li::before {
+  content: "→ ";
+  color: var(--accent);
+}
+
+/* ---- Footer ---- */
+.footer {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 32px 16px 40px;
+}
+.gh {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--fg);
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+.gh:hover { color: var(--accent); text-decoration: none; }
+.gh svg { display: block; }
+.credit {
+  margin: 16px 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+/* =====================================================
+   DEAD STATE — the dramatic effect after June 30, 2026
+   ===================================================== */
+body.dead {
+  background: radial-gradient(circle at 50% -10%, #1a0000, #050000 60%);
+}
+body.dead .eyebrow { color: var(--dead); }
+body.dead .accent,
+body.dead .label { color: rgba(255, 80, 80, 0.7); }
+
+body.dead .num {
+  color: var(--dead);
+  text-shadow: 0 0 30px rgba(255, 45, 45, 0.85), 0 0 8px rgba(255, 0, 0, 0.9);
+  animation: glitch 2.4s infinite;
+}
+body.dead .sep { color: var(--dead); }
+body.dead .status {
+  color: var(--dead);
+  font-weight: 700;
+  text-shadow: 0 0 18px rgba(255, 45, 45, 0.6);
+}
+body.dead .clock {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px) rotate(-0.4deg); }
+  40% { transform: translateX(8px) rotate(0.4deg); }
+  60% { transform: translateX(-6px); }
+  80% { transform: translateX(6px); }
+}
+
+@keyframes glitch {
+  0%, 92%, 100% { transform: translate(0, 0); filter: none; }
+  93% { transform: translate(-2px, 1px); filter: hue-rotate(20deg); }
+  95% { transform: translate(3px, -1px); }
+  97% { transform: translate(-2px, -1px); }
+  99% { transform: translate(1px, 1px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sep, .sound-prompt { animation: none; }
+  body.dead .num, body.dead .clock { animation: none; }
+  .flash.fire { animation-duration: 0.4s; }
+}
