@@ -1,94 +1,78 @@
-// ===================================================================
-// Tenor API Death Countdown
-// Counts down to June 30, 2026 — the day Google kills the Tenor API.
-// At the moment of death the page turns red, shakes, plays clock.mp3
-// exactly once, and flips to counting UP: "____ since tenor died".
-// ===================================================================
+// Tenor API death watch.
+// Counts down to June 30, 2026, the day Google kills the public Tenor API.
+// At zero the monitor goes from amber to red, shakes and glitches, plays
+// clock.mp3 one time, and the clock starts counting up since the API died.
 
-// Month is 0-indexed: 5 = June. Tenor API shuts down June 30, 2026 (UTC).
+// Month is 0-indexed, so 5 is June. Target is June 30, 2026 00:00 UTC.
 const DEATH_TIME = Date.UTC(2026, 5, 30, 0, 0, 0);
 
-const els = {
+const el = {
   days: document.getElementById("days"),
   hours: document.getElementById("hours"),
   minutes: document.getElementById("minutes"),
   seconds: document.getElementById("seconds"),
+  lead: document.getElementById("lead"),
   status: document.getElementById("status"),
-  eyebrow: document.getElementById("eyebrow"),
-  title: document.getElementById("title"),
-  clock: document.getElementById("clock"),
+  headline: document.getElementById("headline"),
+  pill: document.getElementById("pill"),
   flash: document.getElementById("flash"),
   sound: document.getElementById("death-sound"),
-  soundPrompt: document.getElementById("sound-prompt"),
+  prompt: document.getElementById("sound-prompt"),
 };
 
-let isDead = false;       // have we crossed into the dead state yet?
-let soundPlayed = false;  // ensure clock.mp3 plays only one time
+let dead = false;        // have we crossed the deadline yet?
+let soundPlayed = false; // clock.mp3 plays one time only
 
 const pad = (n) => String(n).padStart(2, "0");
 
-// Try to play the death sound exactly once. Browsers may block autoplay
-// without a user gesture, so on failure we surface a tap-to-play button.
+// Try to play the death sound once. Browsers block autoplay before any user
+// gesture, so if that happens we show a button to let the visitor trigger it.
 function playDeathSound() {
-  if (soundPlayed || !els.sound) return;
-  const attempt = els.sound.play();
-  if (attempt && typeof attempt.then === "function") {
-    attempt
-      .then(() => {
-        soundPlayed = true;
-        els.soundPrompt.hidden = true;
-      })
-      .catch(() => {
-        // Autoplay blocked — let the user trigger it.
-        els.soundPrompt.hidden = false;
-      });
+  if (soundPlayed || !el.sound) return;
+  const p = el.sound.play();
+  if (p && typeof p.then === "function") {
+    p.then(() => {
+      soundPlayed = true;
+      el.prompt.hidden = true;
+    }).catch(() => {
+      el.prompt.hidden = false;
+    });
   } else {
     soundPlayed = true;
   }
 }
 
-els.soundPrompt.addEventListener("click", () => {
-  els.sound.currentTime = 0;
-  els.sound.play().then(() => {
+el.prompt.addEventListener("click", () => {
+  el.sound.currentTime = 0;
+  el.sound.play().then(() => {
     soundPlayed = true;
-    els.soundPrompt.hidden = true;
+    el.prompt.hidden = true;
   }).catch(() => {});
 });
 
-// Switch the page into its dramatic "dead" presentation.
-function enterDeadState() {
-  if (isDead) return;
-  isDead = true;
+function goCritical() {
+  if (dead) return;
+  dead = true;
   document.body.classList.add("dead");
-  els.flash.classList.add("fire");
-  els.eyebrow.textContent = "💀 It happened";
-  els.title.textContent = "The Tenor API is dead";
-  els.status.textContent = "since tenor died";
+  el.flash.classList.add("fire");
+  el.headline.textContent = "The Tenor API is dead.";
+  el.pill.textContent = "410 gone";
+  el.lead.textContent = "time since shutdown";
+  el.status.innerHTML = 'since tenor died<span class="cursor" aria-hidden="true">_</span>';
   playDeathSound();
 }
 
-function render() {
-  const now = Date.now();
-  const diff = DEATH_TIME - now;
+function tick() {
+  const diff = DEATH_TIME - Date.now();
+  const secs = Math.floor(Math.abs(diff) / 1000);
 
-  if (diff > 0) {
-    // ---- Counting down to death ----
-    const totalSeconds = Math.floor(diff / 1000);
-    els.days.textContent = Math.floor(totalSeconds / 86400);
-    els.hours.textContent = pad(Math.floor((totalSeconds % 86400) / 3600));
-    els.minutes.textContent = pad(Math.floor((totalSeconds % 3600) / 60));
-    els.seconds.textContent = pad(totalSeconds % 60);
-  } else {
-    // ---- Tenor has died: count UP since the moment of death ----
-    if (!isDead) enterDeadState();
+  if (diff <= 0 && !dead) goCritical();
 
-    const elapsed = Math.floor(-diff / 1000);
-    els.days.textContent = Math.floor(elapsed / 86400);
-    els.hours.textContent = pad(Math.floor((elapsed % 86400) / 3600));
-    els.minutes.textContent = pad(Math.floor((elapsed % 3600) / 60));
-    els.seconds.textContent = pad(elapsed % 60);
-  }
+  el.days.textContent = Math.floor(secs / 86400);
+  el.hours.textContent = pad(Math.floor((secs % 86400) / 3600));
+  el.minutes.textContent = pad(Math.floor((secs % 3600) / 60));
+  el.seconds.textContent = pad(secs % 60);
 }
 
-render();
-setInterval(render, 1000);
+tick();
+setInterval(tick, 1000);

@@ -1,264 +1,304 @@
+/* ============================================================
+   Tenor API death watch
+   Look: amber CRT phosphor terminal / status monitor.
+   Reason: Tenor is a developer API, and after June 30 it just
+   returns errors. So the page is a console watching it die.
+   Amber -> red is warning -> critical; the glow and scanlines
+   are period-correct for a phosphor display, not decoration.
+   ============================================================ */
+
 :root {
-  --bg: #0a0a0f;
-  --bg-2: #12121a;
-  --fg: #e8e8ef;
-  --muted: #8a8a99;
-  --accent: #5eead4;
-  --link: #7dd3fc;
-  --dead: #ff2d2d;
-  --dead-deep: #8b0000;
+  --bg: #0d0c08;
+  --panel: rgba(255, 176, 0, 0.035);
+
+  /* Single-phosphor palette; flips to red the moment Tenor dies. */
+  --phosphor: #ffb000;        /* primary readout */
+  --phosphor-soft: #cda84f;   /* body copy */
+  --phosphor-faint: #8c7536;  /* labels, dim chrome */
+  --glow: rgba(255, 176, 0, 0.45);
+  --line: rgba(255, 176, 0, 0.22);
 }
 
 * { box-sizing: border-box; }
 
-html, body {
-  margin: 0;
-  padding: 0;
-  min-height: 100%;
-}
+html { -webkit-text-size-adjust: 100%; }
 
 body {
-  background: radial-gradient(circle at 50% -10%, var(--bg-2), var(--bg) 60%);
-  color: var(--fg);
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--phosphor-soft);
+  font-family: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: 16px;
+  line-height: 1.65;
+  transition: background 0.9s ease;
+}
+
+a {
+  color: var(--phosphor);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+a:hover { background: var(--phosphor); color: var(--bg); text-decoration: none; }
+
+/* ---- CRT screen: scanlines, curvature vignette, faint flicker ---- */
+.screen {
+  position: relative;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  overflow-x: hidden;
-  transition: background 1.2s ease;
+  background:
+    radial-gradient(120% 90% at 50% 30%, rgba(255, 176, 0, 0.05), transparent 60%);
+  transition: background 0.9s ease;
 }
-
-.vignette {
+.screen::before { /* scanlines */
+  content: "";
   position: fixed;
   inset: 0;
+  z-index: 8;
   pointer-events: none;
-  box-shadow: inset 0 0 200px 40px rgba(0, 0, 0, 0.6);
-  z-index: 1;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0,
+    rgba(0, 0, 0, 0) 2px,
+    rgba(0, 0, 0, 0.22) 3px
+  );
+}
+.screen::after { /* edge vignette + slow flicker */
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 7;
+  pointer-events: none;
+  background: radial-gradient(120% 100% at 50% 45%, transparent 58%, rgba(0, 0, 0, 0.7) 100%);
+  animation: flicker 7s infinite;
+}
+@keyframes flicker {
+  0%, 100% { opacity: 0.92; }
+  47% { opacity: 0.96; }
+  48% { opacity: 0.86; }
+  49% { opacity: 0.97; }
+  72% { opacity: 0.9; }
 }
 
-/* full-screen red flash used at the moment of death */
+/* red full-screen flash at the moment of death */
 .flash {
   position: fixed;
   inset: 0;
-  background: var(--dead);
+  z-index: 20;
+  background: #ff3b30;
   opacity: 0;
   pointer-events: none;
-  z-index: 50;
 }
-.flash.fire {
-  animation: flash 1.6s ease-out forwards;
-}
+.flash.fire { animation: flash 1.5s ease-out forwards; }
 @keyframes flash {
-  0%   { opacity: 0; }
-  8%   { opacity: 0.85; }
+  0% { opacity: 0; }
+  7% { opacity: 0.8; }
   100% { opacity: 0; }
 }
 
 .wrap {
   position: relative;
-  z-index: 2;
+  z-index: 9;
   flex: 1;
   width: 100%;
-  max-width: 880px;
+  max-width: 760px;
   margin: 0 auto;
-  padding: 7vh 24px 40px;
+  padding: clamp(36px, 8vh, 80px) 22px 32px;
+}
+
+/* ---- Headline ---- */
+.headline {
+  font-weight: 600;
+  font-size: clamp(1.5rem, 4.5vw, 2.3rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  margin: 0 0 14px;
+  color: var(--phosphor);
+  transition: color 0.9s ease;
+}
+.dek {
+  margin: 0 0 36px;
+  max-width: 60ch;
+  color: var(--phosphor-soft);
+}
+
+/* ---- Console window ---- */
+.console {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4), inset 0 0 60px rgba(0, 0, 0, 0.45);
+  transition: border-color 0.9s ease;
+}
+.titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.8rem;
+  transition: border-color 0.9s ease;
+}
+.path { color: var(--phosphor-faint); }
+.pill {
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border: 1px solid var(--phosphor);
+  color: var(--phosphor);
+  transition: color 0.9s ease, border-color 0.9s ease, background 0.3s ease;
+}
+
+.readout {
+  padding: 30px 18px 26px;
   text-align: center;
 }
-
-.hero { margin-bottom: 48px; }
-
-.eyebrow {
-  font-size: 0.95rem;
-  letter-spacing: 0.18em;
+.lead {
+  margin: 0 0 6px;
+  font-size: 0.82rem;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--accent);
-  margin: 0 0 14px;
+  color: var(--phosphor-faint);
 }
 
-.title {
-  font-size: clamp(2rem, 6vw, 3.4rem);
-  font-weight: 800;
-  line-height: 1.08;
-  margin: 0 0 18px;
-}
-
-.subtitle {
-  font-size: clamp(1rem, 2.4vw, 1.2rem);
-  color: var(--muted);
-  max-width: 640px;
-  margin: 0 auto;
-  line-height: 1.6;
-}
-.subtitle strong { color: var(--fg); }
-
-a { color: var(--link); text-decoration: none; }
-a:hover { text-decoration: underline; }
-
-/* ---- Clock ---- */
+/* ---- The clock ---- */
 .clock {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  gap: clamp(6px, 2vw, 18px);
-  font-family: "JetBrains Mono", monospace;
-  margin: 8px 0 18px;
+  gap: clamp(4px, 1.8vw, 14px);
+  font-family: "VT323", monospace;
 }
-
-.unit {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: clamp(64px, 18vw, 130px);
-}
-
+.unit { display: flex; flex-direction: column; align-items: center; min-width: clamp(54px, 16vw, 110px); }
 .num {
-  font-size: clamp(2.6rem, 11vw, 6rem);
-  font-weight: 800;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-  text-shadow: 0 0 24px rgba(94, 234, 212, 0.25);
+  font-size: clamp(3.4rem, 16vw, 8.5rem);
+  line-height: 0.9;
+  color: var(--phosphor);
+  text-shadow: 0 0 14px var(--glow);
+  transition: color 0.9s ease, text-shadow 0.9s ease;
 }
-
 .label {
-  font-size: clamp(0.65rem, 1.6vw, 0.9rem);
-  letter-spacing: 0.18em;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--muted);
-  margin-top: 10px;
+  color: var(--phosphor-faint);
+  margin-top: 6px;
 }
-
 .sep {
-  font-size: clamp(2rem, 8vw, 4.4rem);
-  font-weight: 700;
-  line-height: 1;
-  color: var(--muted);
-  animation: blink 1s steps(1) infinite;
+  font-size: clamp(2.6rem, 12vw, 6rem);
+  line-height: 1.1;
+  color: var(--phosphor);
+  text-shadow: 0 0 14px var(--glow);
+  animation: blink 1.1s steps(1) infinite;
+  transition: color 0.9s ease;
 }
-@keyframes blink { 50% { opacity: 0.25; } }
+@keyframes blink { 50% { opacity: 0.18; } }
 
 .status {
-  font-size: clamp(1rem, 2.6vw, 1.35rem);
-  letter-spacing: 0.04em;
-  color: var(--fg);
   margin: 18px 0 0;
+  font-size: clamp(0.95rem, 2.4vw, 1.15rem);
+  color: var(--phosphor);
+  transition: color 0.9s ease;
 }
+.cursor { animation: blink 1.1s steps(1) infinite; }
 
-.sound-prompt {
-  margin-top: 26px;
-  padding: 12px 22px;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #fff;
-  background: var(--dead-deep);
-  border: 1px solid var(--dead);
-  border-radius: 999px;
+.sound {
+  margin-top: 20px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  background: transparent;
+  color: var(--phosphor);
+  border: 1px solid var(--phosphor);
+  padding: 9px 16px;
   cursor: pointer;
-  transition: transform 0.15s ease, background 0.2s ease;
-  animation: pulse-btn 1.4s ease-in-out infinite;
 }
-.sound-prompt:hover { background: var(--dead); transform: scale(1.04); }
-@keyframes pulse-btn {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 45, 45, 0.5); }
-  50%      { box-shadow: 0 0 0 14px rgba(255, 45, 45, 0); }
-}
+.sound:hover { background: var(--phosphor); color: var(--bg); }
 
-/* ---- Reading section ---- */
-.reading {
-  margin-top: 64px;
-  text-align: left;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 16px;
-  padding: 28px 32px;
+/* ---- Log / reading ---- */
+.log { margin-top: 40px; }
+.log h2 {
+  font-size: 0.82rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--phosphor-faint);
+  font-weight: 500;
+  margin: 0 0 12px;
 }
-.reading h2 {
-  margin: 0 0 14px;
-  font-size: 1.3rem;
+.log h2::before { content: "// "; opacity: 0.6; }
+.log p { margin: 0 0 16px; max-width: 64ch; }
+.srclabel {
+  color: var(--phosphor-faint);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-size: 0.82rem;
+  margin-top: 28px !important;
 }
-.reading p {
-  color: var(--muted);
-  line-height: 1.7;
-  margin: 0 0 18px;
-}
-.reading strong { color: var(--fg); }
-.links {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: grid;
-  gap: 10px;
-}
-.links li::before {
-  content: "→ ";
-  color: var(--accent);
-}
+.srclabel::before { content: "// "; opacity: 0.6; }
+.links { list-style: none; padding: 0; margin: 0; display: grid; gap: 9px; }
+.links li { position: relative; padding-left: 18px; }
+.links li::before { content: ">"; position: absolute; left: 0; color: var(--phosphor-faint); }
 
 /* ---- Footer ---- */
 .footer {
   position: relative;
-  z-index: 2;
+  z-index: 9;
+  border-top: 1px solid var(--line);
+  padding: 22px;
   text-align: center;
-  padding: 32px 16px 40px;
+  transition: border-color 0.9s ease;
 }
 .gh {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  color: var(--fg);
-  font-weight: 600;
-  transition: color 0.2s ease;
+  gap: 9px;
+  color: var(--phosphor-soft);
+  text-decoration: none;
+  font-size: 0.9rem;
 }
-.gh:hover { color: var(--accent); text-decoration: none; }
+.gh:hover { color: var(--phosphor); background: transparent; }
 .gh svg { display: block; }
-.credit {
-  margin: 16px 0 0;
-  color: var(--muted);
-  font-size: 0.85rem;
-}
+.credit { margin: 12px 0 0; color: var(--phosphor-faint); font-size: 0.82rem; }
 
-/* =====================================================
-   DEAD STATE — the dramatic effect after June 30, 2026
-   ===================================================== */
+/* ============================================================
+   DEAD STATE: the whole monitor goes critical (amber -> red)
+   ============================================================ */
 body.dead {
-  background: radial-gradient(circle at 50% -10%, #1a0000, #050000 60%);
+  --phosphor: #ff3b30;
+  --phosphor-soft: #ff7a72;
+  --phosphor-faint: #b8443d;
+  --glow: rgba(255, 59, 48, 0.55);
+  --line: rgba(255, 59, 48, 0.3);
+  background: #120403;
 }
-body.dead .eyebrow { color: var(--dead); }
-body.dead .accent,
-body.dead .label { color: rgba(255, 80, 80, 0.7); }
-
-body.dead .num {
-  color: var(--dead);
-  text-shadow: 0 0 30px rgba(255, 45, 45, 0.85), 0 0 8px rgba(255, 0, 0, 0.9);
-  animation: glitch 2.4s infinite;
+body.dead .screen {
+  background: radial-gradient(120% 90% at 50% 30%, rgba(255, 59, 48, 0.08), transparent 60%);
 }
-body.dead .sep { color: var(--dead); }
-body.dead .status {
-  color: var(--dead);
-  font-weight: 700;
-  text-shadow: 0 0 18px rgba(255, 45, 45, 0.6);
-}
-body.dead .clock {
-  animation: shake 0.5s ease-in-out;
-}
+body.dead .pill { background: rgba(255, 59, 48, 0.15); }
+body.dead .num { animation: glitch 2.6s infinite; }
+body.dead .clock { animation: shake 0.55s ease-in-out; }
+body.dead .status { font-weight: 600; }
 
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
-  20% { transform: translateX(-8px) rotate(-0.4deg); }
-  40% { transform: translateX(8px) rotate(0.4deg); }
-  60% { transform: translateX(-6px); }
-  80% { transform: translateX(6px); }
+  20% { transform: translateX(-7px); }
+  40% { transform: translateX(7px); }
+  60% { transform: translateX(-5px); }
+  80% { transform: translateX(5px); }
 }
-
 @keyframes glitch {
-  0%, 92%, 100% { transform: translate(0, 0); filter: none; }
-  93% { transform: translate(-2px, 1px); filter: hue-rotate(20deg); }
-  95% { transform: translate(3px, -1px); }
-  97% { transform: translate(-2px, -1px); }
-  99% { transform: translate(1px, 1px); }
+  0%, 90%, 100% { transform: translate(0, 0); }
+  91% { transform: translate(-2px, 1px); }
+  93% { transform: translate(3px, -1px); }
+  95% { transform: translate(-2px, -1px); }
+  97% { transform: translate(2px, 1px); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sep, .sound-prompt { animation: none; }
+  .sep, .cursor, .screen::after { animation: none; }
   body.dead .num, body.dead .clock { animation: none; }
-  .flash.fire { animation-duration: 0.4s; }
+  .flash.fire { animation-duration: 0.3s; }
 }

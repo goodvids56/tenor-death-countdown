@@ -1,38 +1,46 @@
 # tenor-death-countdown
 
-A GitHub Pages website that counts down to **June 30, 2026** — the day Google
-shuts down the public [Tenor GIF API](https://support.google.com/tenor/answer/10455265?hl=en).
+A GitHub Pages site that counts down to June 30, 2026, the day Google shuts down
+the public [Tenor GIF API](https://support.google.com/tenor/answer/10455265?hl=en).
 
-When the moment arrives, the countdown turns **red**, shakes/glitches, plays
-`clock.mp3` once, and flips to counting **up**: *"\_\_\_ since tenor died."*
+When the deadline hits, the whole monitor goes from amber to red, the numbers
+shake and glitch, `clock.mp3` plays one time, and the clock flips to counting up:
+"since tenor died."
+
+## The look
+
+It is built to read like an amber CRT terminal watching a service die, because
+that is what is happening. Tenor is a developer API, and on June 30 it stops
+returning GIFs and starts returning errors. Amber is the normal "deprecated"
+state; red is the dead one. The glow and scanlines are there to sell the old
+phosphor monitor, not for decoration.
 
 ## Files
 
-| File | Purpose |
+| File | What it does |
 | --- | --- |
-| `index.html` | Page markup, content, and article links |
-| `style.css` | Styling, including the dramatic red "dead" state |
-| `script.js` | Countdown logic + death transition |
-| `clock.mp3` | Sound that plays once at the moment of death *(add this to the repo root)* |
+| `index.html` | Markup, copy, and the article links |
+| `style.css` | The amber CRT styling and the red dead state |
+| `script.js` | Countdown math and the switch to critical |
+| `clock.mp3` | The sound that plays once when the API dies. Add this to the repo root. |
 
-> **Note:** browsers block autoplay with sound until a user interacts with the
-> page. If the death moment happens before any interaction, a *"Tap to hear it
-> die"* button appears so the visitor can trigger `clock.mp3` themselves. It
-> still only ever plays one time.
+A note on the sound: browsers will not autoplay audio until someone interacts
+with the page. If the deadline passes before any click, a `[ play the sound ]`
+button appears so the visitor can trigger `clock.mp3`. It still only plays once.
 
-## Enabling GitHub Pages
+## Putting it online
 
 1. Push this repo to GitHub.
-2. Go to **Settings → Pages**.
-3. Under **Build and deployment → Source**, choose **Deploy from a branch**.
-4. Select branch `main` (or whichever you deploy) and folder `/ (root)`, then **Save**.
-5. The site goes live at `https://goodvids56.github.io/tenor-death-countdown/`.
+2. Open Settings, then Pages.
+3. Under Source, pick "Deploy from a branch."
+4. Choose your branch and the `/ (root)` folder, then save.
+5. It goes live at `https://goodvids56.github.io/tenor-death-countdown/`.
 
-## Articles about the shutdown
+## Where the date comes from
 
-- [Google's official Tenor API shutdown FAQ](https://support.google.com/tenor/answer/10455265?hl=en)
-- [Discussion on Hacker News](https://news.ycombinator.com/item?id=46603473)
-- [What developers need to know in 2026](https://digitalbiztalk.com/article/google-shuts-down-tenor-api-what-developers-need-to-know-in-2026)
-- [Some GIFs already vanishing from X](https://roboin.io/article/en/2026/06/24/some-gifs-unavailable-on-x-due-to-tenor-api-shutdown/)
+- [Google's Tenor API shutdown notice](https://support.google.com/tenor/answer/10455265?hl=en)
+- [Developers reacting on Hacker News](https://news.ycombinator.com/item?id=46603473)
+- [What it means for developers in 2026](https://digitalbiztalk.com/article/google-shuts-down-tenor-api-what-developers-need-to-know-in-2026)
+- [GIFs already vanishing from X](https://roboin.io/article/en/2026/06/24/some-gifs-unavailable-on-x-due-to-tenor-api-shutdown/)
 
 Made by goodvids56.
