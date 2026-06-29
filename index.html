@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tenor API death watch</title>
+  <meta name="description" content="A live countdown to June 30, 2026, the day Google shuts down the public Tenor GIF API." />
+  <meta property="og:title" content="Tenor API death watch" />
+  <meta property="og:description" content="Counting down to the day Google kills the Tenor GIF API." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Plays one time, at the moment the API dies. -->
+  <audio id="death-sound" src="clock.mp3" preload="auto"></audio>
+
+  <div class="flash" id="flash"></div>
+
+  <div class="screen">
+    <main class="wrap">
+      <h1 class="headline" id="headline">The Tenor API is dying</h1>
+      <p class="dek">
+        On June 30, 2026, Google shuts down the public
+        <a href="https://support.google.com/tenor/answer/10455265?hl=en" target="_blank" rel="noopener">Tenor GIF API</a>.
+        For years it quietly answered the GIF searches inside Discord, WhatsApp, X, Bluesky,
+        and a pile of apps that never told you they were using it.
+      </p>
+
+      <section class="console">
+        <div class="titlebar">
+          <span class="path">tenor-api://status</span>
+          <span class="pill" id="pill">deprecated</span>
+        </div>
+
+        <div class="readout" aria-live="polite">
+          <p class="lead" id="lead">time remaining until shutdown</p>
+
+          <div class="clock">
+            <div class="unit"><span class="num" id="days">--</span><span class="label">days</span></div>
+            <span class="sep">:</span>
+            <div class="unit"><span class="num" id="hours">--</span><span class="label">hrs</span></div>
+            <span class="sep">:</span>
+            <div class="unit"><span class="num" id="minutes">--</span><span class="label">min</span></div>
+            <span class="sep">:</span>
+            <div class="unit"><span class="num" id="seconds">--</span><span class="label">sec</span></div>
+          </div>
+
+          <p class="status" id="status">until the Tenor API shuts down<span class="cursor" aria-hidden="true">_</span></p>
+
+          <button class="sound" id="sound-prompt" hidden>[ play the sound ]</button>
+        </div>
+      </section>
+
+      <section class="log">
+        <h2>what happened</h2>
+        <p>
+          Google announced the shutdown on January 13, 2026. New API sign-ups stopped that day.
+          On June 30, 2026 the keys that still work go dark too, and calls to the API start
+          returning errors instead of GIFs.
+        </p>
+        <p>
+          Tenor's own website and app keep running. The part that let every other app pull from
+          its GIF library does not.
+        </p>
+        <p class="srclabel">further reading</p>
+        <ul class="links">
+          <li><a href="https://support.google.com/tenor/answer/10455265?hl=en" target="_blank" rel="noopener">Google's Tenor API shutdown notice</a></li>
+          <li><a href="https://news.ycombinator.com/item?id=46603473" target="_blank" rel="noopener">Developers reacting on Hacker News</a></li>
+          <li><a href="https://digitalbiztalk.com/article/google-shuts-down-tenor-api-what-developers-need-to-know-in-2026" target="_blank" rel="noopener">What it means for developers in 2026</a></li>
+          <li><a href="https://roboin.io/article/en/2026/06/24/some-gifs-unavailable-on-x-due-to-tenor-api-shutdown/" target="_blank" rel="noopener">GIFs already vanishing from X</a></li>
+        </ul>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <a class="gh" href="https://github.com/goodvids56/tenor-death-countdown" target="_blank" rel="noopener" aria-label="This project on GitHub">
+        <i class="fa-brands fa-github" aria-hidden="true"></i>
+      </a>
+      <p class="credit">Made by goodvids56.</p>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
