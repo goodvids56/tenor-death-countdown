@@ -70,7 +70,7 @@ function tick() {
 
   if (diff <= 0 && !dead) goCritical();
 
-  el.days.textContent = Math.floor(secs / 86400);
+  el.days.textContent = pad(Math.floor(secs / 86400));
   el.hours.textContent = pad(Math.floor((secs % 86400) / 3600));
   el.minutes.textContent = pad(Math.floor((secs % 3600) / 60));
   el.seconds.textContent = pad(secs % 60);
