@@ -3,8 +3,10 @@
 // At zero the monitor goes from amber to red, shakes and glitches, plays
 // clock.mp3 one time, and the clock starts counting up since the API died.
 
-// Month is 0-indexed, so 5 is June. Target is June 30, 2026 00:00 UTC.
-const DEATH_TIME = Date.UTC(2026, 5, 30, 0, 0, 0);
+// Google runs on Pacific time, so the deadline is midnight on June 30, 2026
+// in Los Angeles. In June that is PDT (UTC-7), which is 07:00 UTC.
+// Month is 0-indexed, so 5 is June.
+const DEATH_TIME = Date.UTC(2026, 5, 30, 7, 0, 0);
 
 const el = {
   days: document.getElementById("days"),

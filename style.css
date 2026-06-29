@@ -1,21 +1,18 @@
 /* ============================================================
    Tenor API death watch
-   Look: amber CRT phosphor terminal / status monitor.
-   Reason: Tenor is a developer API, and after June 30 it just
-   returns errors. So the page is a console watching it die.
-   Amber -> red is warning -> critical; the glow and scanlines
-   are period-correct for a phosphor display, not decoration.
+   Look: an amber status console watching a developer API die.
+   Reason: Tenor is an API, and after June 30 it just returns
+   errors. Amber is the normal "deprecated" state; red is dead.
    ============================================================ */
 
 :root {
   --bg: #0d0c08;
-  --panel: rgba(255, 176, 0, 0.035);
+  --panel: rgba(255, 176, 0, 0.04);
 
-  /* Single-phosphor palette; flips to red the moment Tenor dies. */
+  /* Amber console palette; flips to red the moment Tenor dies. */
   --phosphor: #ffb000;        /* primary readout */
   --phosphor-soft: #cda84f;   /* body copy */
   --phosphor-faint: #8c7536;  /* labels, dim chrome */
-  --glow: rgba(255, 176, 0, 0.45);
   --line: rgba(255, 176, 0, 0.22);
 }
 
@@ -28,7 +25,7 @@ body {
   min-height: 100vh;
   background: var(--bg);
   color: var(--phosphor-soft);
-  font-family: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-family: "Roboto Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
   font-size: 16px;
   line-height: 1.65;
   transition: background 0.9s ease;
@@ -42,44 +39,11 @@ a {
 }
 a:hover { background: var(--phosphor); color: var(--bg); text-decoration: none; }
 
-/* ---- CRT screen: scanlines, curvature vignette, faint flicker ---- */
 .screen {
   position: relative;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background:
-    radial-gradient(120% 90% at 50% 30%, rgba(255, 176, 0, 0.05), transparent 60%);
-  transition: background 0.9s ease;
-}
-.screen::before { /* scanlines */
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 8;
-  pointer-events: none;
-  background: repeating-linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0) 0,
-    rgba(0, 0, 0, 0) 2px,
-    rgba(0, 0, 0, 0.22) 3px
-  );
-}
-.screen::after { /* edge vignette + slow flicker */
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 7;
-  pointer-events: none;
-  background: radial-gradient(120% 100% at 50% 45%, transparent 58%, rgba(0, 0, 0, 0.7) 100%);
-  animation: flicker 7s infinite;
-}
-@keyframes flicker {
-  0%, 100% { opacity: 0.92; }
-  47% { opacity: 0.96; }
-  48% { opacity: 0.86; }
-  49% { opacity: 0.97; }
-  72% { opacity: 0.9; }
 }
 
 /* red full-screen flash at the moment of death */
@@ -128,7 +92,6 @@ a:hover { background: var(--phosphor); color: var(--bg); text-decoration: none; 
 .console {
   border: 1px solid var(--line);
   background: var(--panel);
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4), inset 0 0 60px rgba(0, 0, 0, 0.45);
   transition: border-color 0.9s ease;
 }
 .titlebar {
@@ -169,30 +132,32 @@ a:hover { background: var(--phosphor); color: var(--bg); text-decoration: none; 
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  gap: clamp(4px, 1.8vw, 14px);
-  font-family: "VT323", monospace;
+  gap: clamp(2px, 1vw, 10px);
 }
-.unit { display: flex; flex-direction: column; align-items: center; min-width: clamp(54px, 16vw, 110px); }
+.unit { display: flex; flex-direction: column; align-items: center; }
 .num {
-  font-size: clamp(3.4rem, 16vw, 8.5rem);
-  line-height: 0.9;
+  display: block;
+  min-width: 2ch;           /* one digit takes the same space as two */
+  text-align: center;
+  font-size: clamp(2.8rem, 13vw, 7rem);
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
   color: var(--phosphor);
-  text-shadow: 0 0 14px var(--glow);
-  transition: color 0.9s ease, text-shadow 0.9s ease;
+  transition: color 0.9s ease;
 }
 .label {
-  font-family: "IBM Plex Mono", monospace;
   font-size: 0.7rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--phosphor-faint);
-  margin-top: 6px;
+  margin-top: 10px;
 }
 .sep {
-  font-size: clamp(2.6rem, 12vw, 6rem);
-  line-height: 1.1;
+  font-size: clamp(2.2rem, 10vw, 5rem);
+  font-weight: 700;
+  line-height: 1;
   color: var(--phosphor);
-  text-shadow: 0 0 14px var(--glow);
   animation: blink 1.1s steps(1) infinite;
   transition: color 0.9s ease;
 }
@@ -247,21 +212,21 @@ a:hover { background: var(--phosphor); color: var(--bg); text-decoration: none; 
   position: relative;
   z-index: 9;
   border-top: 1px solid var(--line);
-  padding: 22px;
+  padding: 20px 22px;
   text-align: center;
   transition: border-color 0.9s ease;
 }
 .gh {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
+  position: absolute;
+  left: 22px;
+  bottom: 16px;
   color: var(--phosphor-soft);
   text-decoration: none;
-  font-size: 0.9rem;
+  font-size: 1.5rem;
+  line-height: 1;
 }
 .gh:hover { color: var(--phosphor); background: transparent; }
-.gh svg { display: block; }
-.credit { margin: 12px 0 0; color: var(--phosphor-faint); font-size: 0.82rem; }
+.credit { margin: 0; color: var(--phosphor-faint); font-size: 0.82rem; }
 
 /* ============================================================
    DEAD STATE: the whole monitor goes critical (amber -> red)
@@ -270,12 +235,8 @@ body.dead {
   --phosphor: #ff3b30;
   --phosphor-soft: #ff7a72;
   --phosphor-faint: #b8443d;
-  --glow: rgba(255, 59, 48, 0.55);
   --line: rgba(255, 59, 48, 0.3);
   background: #120403;
-}
-body.dead .screen {
-  background: radial-gradient(120% 90% at 50% 30%, rgba(255, 59, 48, 0.08), transparent 60%);
 }
 body.dead .pill { background: rgba(255, 59, 48, 0.15); }
 body.dead .num { animation: glitch 2.6s infinite; }
