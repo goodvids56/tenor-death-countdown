@@ -23,6 +23,7 @@ phosphor monitor, not for decoration.
 | `style.css` | The amber CRT styling and the red dead state |
 | `script.js` | Countdown math and the switch to critical |
 | `clock.mp3` | The sound that plays once when the API dies. Add this to the repo root. |
+| `og-image.png` | 1200×630 social preview shown when the page is shared (Open Graph / Twitter cards) |
 
 A note on the sound: browsers will not autoplay audio until someone interacts
 with the page. If the deadline passes before any click, a `[ play the sound ]`
