@@ -1,19 +1,19 @@
 /* ============================================================
    Tenor API death watch
-   Look: an amber status console watching a developer API die.
+   Look: a blue status console watching a developer API die.
    Reason: Tenor is an API, and after June 30 it just returns
-   errors. Amber is the normal "deprecated" state; red is dead.
+   errors. Blue is the normal "deprecated" state; red is dead.
    ============================================================ */
 
 :root {
-  --bg: #0d0c08;
-  --panel: rgba(255, 176, 0, 0.04);
+  --bg: #070a0d;
+  --panel: rgba(0, 210, 255, 0.05);
 
-  /* Amber console palette; flips to red the moment Tenor dies. */
-  --phosphor: #ffb000;        /* primary readout */
-  --phosphor-soft: #cda84f;   /* body copy */
-  --phosphor-faint: #8c7536;  /* labels, dim chrome */
-  --line: rgba(255, 176, 0, 0.22);
+  /* Blue console palette; flips to red the moment Tenor dies. */
+  --phosphor: #00d2ff;        /* primary readout */
+  --phosphor-soft: #7cc2d6;   /* body copy */
+  --phosphor-faint: #4d7e8c;  /* labels, dim chrome */
+  --line: rgba(0, 210, 255, 0.24);
 }
 
 * { box-sizing: border-box; }
