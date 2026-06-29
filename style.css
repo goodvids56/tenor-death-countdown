@@ -116,7 +116,7 @@ a:hover { background: var(--phosphor); color: var(--bg); text-decoration: none; 
 }
 
 .readout {
-  padding: 30px 18px 26px;
+  padding: 30px 22px 26px;
   text-align: center;
 }
 .lead {
@@ -132,14 +132,15 @@ a:hover { background: var(--phosphor); color: var(--bg); text-decoration: none; 
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  gap: clamp(2px, 1vw, 10px);
+  gap: clamp(2px, 0.8vw, 8px);
+  max-width: 100%;
 }
 .unit { display: flex; flex-direction: column; align-items: center; }
 .num {
   display: block;
   min-width: 2ch;           /* one digit takes the same space as two */
   text-align: center;
-  font-size: clamp(2.8rem, 13vw, 7rem);
+  font-size: clamp(2.2rem, 11vw, 5rem);
   font-weight: 700;
   line-height: 1;
   font-variant-numeric: tabular-nums;
@@ -154,7 +155,7 @@ a:hover { background: var(--phosphor); color: var(--bg); text-decoration: none; 
   margin-top: 10px;
 }
 .sep {
-  font-size: clamp(2.2rem, 10vw, 5rem);
+  font-size: clamp(1.6rem, 8vw, 3.4rem);
   font-weight: 700;
   line-height: 1;
   color: var(--phosphor);
