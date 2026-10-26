@@ -37,7 +37,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=2" />
 </head>
 <body>
   <!-- Plays one time, at the moment the API dies. -->
@@ -64,7 +64,7 @@
         <div class="readout" aria-live="polite">
           <p class="lead" id="lead">time remaining until shutdown</p>
 
-          <div class="clock clock-cal">
+          <div class="clock">
             <div class="unit"><span class="num" id="millennia">--</span><span class="label">mil</span></div>
             <span class="sep">:</span>
             <div class="unit"><span class="num" id="centuries">--</span><span class="label">cen</span></div>
@@ -74,9 +74,7 @@
             <div class="unit"><span class="num" id="years">--</span><span class="label">yrs</span></div>
             <span class="sep">:</span>
             <div class="unit"><span class="num" id="months">--</span><span class="label">mos</span></div>
-          </div>
-
-          <div class="clock">
+            <span class="sep">:</span>
             <div class="unit"><span class="num" id="days">--</span><span class="label">days</span></div>
             <span class="sep">:</span>
             <div class="unit"><span class="num" id="hours">--</span><span class="label">hrs</span></div>
@@ -143,6 +141,6 @@
     </footer>
   </div>
 
-  <script src="script.js"></script>
+  <script src="script.js?v=2"></script>
 </body>
 </html>
