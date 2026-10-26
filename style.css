@@ -132,15 +132,17 @@ a:hover { background: var(--phosphor); color: var(--bg); text-decoration: none; 
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  gap: clamp(1px, 0.6vw, 6px);
+  gap: clamp(1px, calc(3.2vw / var(--units)), calc(32px / var(--units)));
   max-width: 100%;
+  --units: 9;               /* how many units are showing; script.js updates it */
 }
+.clock [hidden] { display: none; }
 .unit { display: flex; flex-direction: column; align-items: center; }
 .num {
   display: block;
   min-width: 2ch;           /* one digit takes the same space as two */
   text-align: center;
-  font-size: clamp(0.85rem, 4.6vw, 2.4rem);
+  font-size: clamp(0.85rem, calc(42vw / var(--units)), calc(20rem / var(--units)));
   font-weight: 700;
   line-height: 1;
   font-variant-numeric: tabular-nums;
@@ -148,14 +150,14 @@ a:hover { background: var(--phosphor); color: var(--bg); text-decoration: none; 
   transition: color 0.9s ease;
 }
 .label {
-  font-size: clamp(0.45rem, 1.7vw, 0.7rem);
-  letter-spacing: 0.1em;
+  font-size: clamp(0.45rem, calc(15vw / var(--units)), 0.7rem);
+  letter-spacing: calc(0.9em / var(--units));
   text-transform: uppercase;
   color: var(--phosphor-faint);
   margin-top: 10px;
 }
 .sep {
-  font-size: clamp(0.7rem, 3.2vw, 1.7rem);
+  font-size: clamp(0.7rem, calc(29vw / var(--units)), calc(14rem / var(--units)));
   font-weight: 700;
   line-height: 1;
   color: var(--phosphor);

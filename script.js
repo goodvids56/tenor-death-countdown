@@ -9,6 +9,7 @@
 const DEATH_TIME = Date.UTC(2026, 5, 30, 7, 0, 0);
 
 const el = {
+  clock: document.querySelector(".clock"),
   millennia: document.getElementById("millennia"),
   centuries: document.getElementById("centuries"),
   decades: document.getElementById("decades"),
@@ -31,6 +32,11 @@ let dead = false;        // have we crossed the deadline yet?
 let soundPlayed = false; // clock.mp3 plays one time only
 
 const pad = (n) => String(n).padStart(2, "0");
+
+// The big units stay hidden until their time comes: months shows up after
+// the first month, years after the first year, and so on up to millennia.
+// Days, hours, minutes, and seconds always show.
+const BIG_UNITS = ["millennia", "centuries", "decades", "years", "months"];
 
 // Add whole calendar months to a UTC timestamp. If the day doesn't exist in
 // the target month (Jan 31 + 1 month), it clamps to that month's last day.
@@ -116,6 +122,19 @@ function tick() {
 
   const t = breakdown(DEATH_TIME, now);
   for (const key in t) el[key].textContent = pad(t[key]);
+
+  // Once a bigger unit shows, every smaller one shows too (even at 00).
+  let reached = false;
+  let visible = 4;
+  for (const key of BIG_UNITS) {
+    reached = reached || t[key] > 0;
+    const unit = el[key].parentElement;
+    unit.hidden = !reached;
+    unit.nextElementSibling.hidden = !reached; // the ":" after it
+    if (reached) visible++;
+  }
+  // style.css sizes the clock off this, so fewer units means bigger digits.
+  el.clock.style.setProperty("--units", visible);
 }
 
 tick();
