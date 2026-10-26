@@ -9,6 +9,11 @@
 const DEATH_TIME = Date.UTC(2026, 5, 30, 7, 0, 0);
 
 const el = {
+  millennia: document.getElementById("millennia"),
+  centuries: document.getElementById("centuries"),
+  decades: document.getElementById("decades"),
+  years: document.getElementById("years"),
+  months: document.getElementById("months"),
   days: document.getElementById("days"),
   hours: document.getElementById("hours"),
   minutes: document.getElementById("minutes"),
@@ -26,6 +31,47 @@ let dead = false;        // have we crossed the deadline yet?
 let soundPlayed = false; // clock.mp3 plays one time only
 
 const pad = (n) => String(n).padStart(2, "0");
+
+// Add whole calendar months to a UTC timestamp. If the day doesn't exist in
+// the target month (Jan 31 + 1 month), it clamps to that month's last day.
+function addMonths(t, n) {
+  const d = new Date(t);
+  const y = d.getUTCFullYear();
+  const m = d.getUTCMonth() + n;
+  const lastDay = new Date(Date.UTC(y, m + 1, 0)).getUTCDate();
+  return Date.UTC(y, m, Math.min(d.getUTCDate(), lastDay),
+    d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds(), d.getUTCMilliseconds());
+}
+
+// Split the gap between two times into calendar months plus leftover
+// days/hours/minutes/seconds, so "1 month" means an actual month on the
+// calendar and not a flat 30 days.
+function breakdown(a, b) {
+  const start = Math.min(a, b);
+  const end = Math.max(a, b);
+  const s = new Date(start);
+  const e = new Date(end);
+
+  let months = (e.getUTCFullYear() - s.getUTCFullYear()) * 12 +
+    (e.getUTCMonth() - s.getUTCMonth());
+  let anchor = addMonths(start, months);
+  if (anchor > end) anchor = addMonths(start, --months);
+
+  const secs = Math.floor((end - anchor) / 1000);
+  const years = Math.floor(months / 12);
+
+  return {
+    millennia: Math.floor(years / 1000),
+    centuries: Math.floor((years % 1000) / 100),
+    decades: Math.floor((years % 100) / 10),
+    years: years % 10,
+    months: months % 12,
+    days: Math.floor(secs / 86400),
+    hours: Math.floor((secs % 86400) / 3600),
+    minutes: Math.floor((secs % 3600) / 60),
+    seconds: secs % 60,
+  };
+}
 
 // Try to play the death sound once. Browsers block autoplay before any user
 // gesture, so if that happens we show a button to let the visitor trigger it.
@@ -65,15 +111,11 @@ function goCritical() {
 }
 
 function tick() {
-  const diff = DEATH_TIME - Date.now();
-  const secs = Math.floor(Math.abs(diff) / 1000);
+  const now = Date.now();
+  if (DEATH_TIME - now <= 0 && !dead) goCritical();
 
-  if (diff <= 0 && !dead) goCritical();
-
-  el.days.textContent = pad(Math.floor(secs / 86400));
-  el.hours.textContent = pad(Math.floor((secs % 86400) / 3600));
-  el.minutes.textContent = pad(Math.floor((secs % 3600) / 60));
-  el.seconds.textContent = pad(secs % 60);
+  const t = breakdown(DEATH_TIME, now);
+  for (const key in t) el[key].textContent = pad(t[key]);
 }
 
 tick();
